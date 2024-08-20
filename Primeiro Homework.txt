@@ -1,3 +1,4 @@
 P1) Que definição você daria para Arquitetura de Computadores e Organização de Computadores? 
-R: Arquitetura de computador refere-se aos atributos de um sistema visiveís a um programador ou, em outras palavras, aqueles atributos que possuem um impacto direto sobre a execução lógica de um programa. 
+R: Arquitetura de computador refere-se aos atributos de um sistema visiveís a um programador ou, 
+em outras palavras, aqueles atributos que possuem um impacto direto sobre a execução lógica de um programa. 
 Organização de computador refere-se às unidades operacionais e suas interconexões que percebem as especificações de arquitetura
