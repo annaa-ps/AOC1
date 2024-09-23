@@ -1,0 +1,406 @@
+﻿                                                                 LABORATÓRIO DE PROGRAMAÇÃO ASSEMBLY 1
+_____________________________________________________________________________________________________________________________________________________________________
+
+        Nome: Ana Alice Cordeiro                    Matrícula: 12211BCC028
+	Nome: Anna Karolyna Pereira Santos          Matrícula: 12221BCC046
+	Nome: Fernanda Ferreira de Melo             Matrícula: 12211BCC043
+	Nome: Sthephanny Caroline da Silva Santos   Matrícula: 12211BCC044
+_____________________________________________________________________________________________________________________________________________________________________
+
+INTRODUÇÃO: 
+Este arquivo contém  as soluções para a lista de problemas utilizando a Arquitetura IAS (Instructional Arithmetic Simulator). Para cada problema proposto, foi desenvolvida uma sequência de instruções na linguagem de montagem do IAS, que posteriormente foi traduzida para sua representação hexadecimal correspondente. Além disso, as soluções foram testadas e simuladas utilizando o aplicativo de simulação disponível no canal da equipe AOC1, na plataforma MS Teams.
+_____________________________________________________________________________________________________________________________________________________________________
+
+
+1) Problema 1 
+(Código em IAS Machine) 
+LOAD M(010); STOR M(015)
+LOAD M(007); STOR M(020)
+LOAD M(015); ADD M(011)
+SUB M(015); STOR M(012).
+LOAD M(012); ADD M(011)
+STOR M(018); LOAD M(000)
+LOAD M(010); SUB M(015)
+STOR M(020);  LOAD M(000)
+LOAD M(018)
+STOR M(010) 
+
+(Código em Hexadecimal)
+000 01 00A 21 00F
+001 01 007 21 014
+002 01 00F 05 00B
+003 06 00F 21 00C
+004 01 00C 05 00B
+005 21 012 01 000
+006 01 00A 06 00F
+007 21 014 01 000
+008 01 012 21 00A
+
+
+2) Problema 2
+(Código em IAS Machine)
+End.  Comandos 
+000    LOAD M(022); STOR M(001)
+001    LOAD M(000); SUB M(021)
+002    JUMP+ M(003) 
+
+003    LOAD M(022); STOR M(004)
+004    LOAD M(000); DIV M(021)
+005    SUB M(020); JUMP M(050)
+006    STOR MQ, M(030); HALT
+
+020    00 000 00 001  // Constante '1'
+021    00 000 00 002  // Constante '2'
+022    00 000 00 070  // Endereço 070
+023    00 000 00 000  // Reservado
+024    00 000 00 003  // Constante '3'
+
+030    LOAD M(022); STOR M(031)
+031    LOAD M(000); DIV M(021)
+032    AND M(000); STOR M(023)
+033    LOAD M(022); ADD M(020)
+034    STOR M(022); STOR MQ, M(035)
+035    LOAD M(022); MUL M(036)
+036    LOAD M(023); STOR M(000)
+037    STOR MQ, M(000); HALT
+
+050    LOAD M(022); STOR M(051)
+051    LSH; MULT M(024)
+052    AND M(000); ADD M(020)
+053    STOR M(023); STOR MQ, M(054)
+
+054    LOAD M(022); ADD M(020)
+055    STOR M(022); STOR MQ, M(056)
+
+056    LOAD M(022); MUL M(057)
+057    LOAD M(023); STOR M(000)
+058    STOR MQ, M(000); HALT
+
+070    00 000 00 003  // Constante '3'
+071    00 000 00 000  // Reservado
+
+
+(Código em Hexadecimal)
+000 01 022 12 001
+001 01 000 06 021
+002 0F 003 0D 100 
+
+003 01 022 12 004 
+004 01 000 0C 021
+005 06 020 0F 050
+006 0D 030 00 000
+
+020 00 000 00 001
+021 00 000 00 002 
+022 00 000 00 070 
+023 00 000 00 000
+024 00 000 00 003
+
+030 01 022 12 031
+031 01 000 0C 021
+032 0A 000 21 023  
+033 01 022 05 020
+034 21 022 0D 035
+035 01 022 13 036
+036 01 023 21 000 
+037 0D 000 00 000 
+
+050 01 022 12 051
+051 09 000 0B 024
+052 0A 000 05 020
+053 21 023 0D 054
+
+054 01 022 05 020
+055 21 022 0D 056
+
+056 01 022 13 057
+057 01 023 21 000
+058 0D 000 00 000
+
+070 00 000 00 003
+071 00 000 00 000
+
+
+3) Problema 3 
+Fragmento 1 
+(Código em IAS Machine)
+End.        Comandos
+000        LOAD MQ,M(022); MUL(020)
+001        LOAD MQ; STOR M(022)
+002        LOAD M(021); SUB M(023)
+003        STOR M (021); SUB M(023)
+004        JUMP + M(000,0:19)
+
+
+(Código em Hexadecimal)
+000 09 022 0B 020
+001 0A 000 21 022
+002 01 021 06 023
+003 21 021 06 023 
+004 0F 000 00 000
+
+020 00 000 00 002
+021 00 000 00 004 
+022 00 000 00 001
+023 00 000 00 001 
+
+
+Fragmento 2
+(Código em IAS Machine)
+End.        Comandos
+000        LOAD MQ; DIV M(023)
+001        SUB M(024); JUMP + M(015, 0:19)
+002        LOAD MQ; DIV M(023)
+003        LOAD MQ; STOR M(023)
+004        LOAD MQ, M(020); MUL M(020)
+005        LOAD MQ; STOR M(020)
+006        LOAD MQ; SUB M(024)
+007        JUMP + M(000, 0:19); JUMP M(100, 0:19)
+
+015        LOAD MQ, M(022); MUL M(020)
+016        LOAD MQ; STOR(022)
+017        JUMP M(002, 0:19); STOR(022)
+
+
+(Código em Hexadecimal)
+000 01 021 0C 023
+001 06 024 0F 015
+002 01 021 0C 023
+003 0A 000 21 021 
+004 09 020 0B 020
+005 0A 000 21 020
+006 01 021 06 024
+007 0F 000 0D 100
+
+015 09 022 0B 020
+016 0A 000 21 022
+017 0D 002 00 000
+
+020 00 000 00 002
+021 00 000 00 007
+022 00 000 00 001
+023 00 000 00 002
+024 00 000 00 001
+
+
+4) Problema 4 
+(Código em IAS Machine)
+LOAD M(1); STOR M(100)
+LOAD M(4); STOR M(101)
+LOAD M(7); STOR M(102)
+LOAD M(14); STOR M(103)
+LOAD M(19); STOR M(104)
+LOAD M(22); STOR M(105)
+LOAD M(25); STOR M(106)
+LOAD M(30); STOR M(107)
+LOAD M(35); STOR M(108)
+LOAD M(47); STOR M(109)
+
+LOAD M(9)            
+STOR M(130)          
+
+LOAD M(0)
+STOR M(110)          
+STOR M(120)          
+
+INICIO_LOOP:
+    LOAD M(130)
+    SUB M(1)
+    JUMP+ M(CONTINUAR)  
+    JUMP M(FIM)         
+
+CONTINUAR:
+    LOAD M(100)       
+    RSH
+    JUMP+ M(PAR)      
+
+IMPAR:
+    LOAD M(100)
+    STOR M(120)       
+    LOAD M(120)
+    ADD M(1)         
+    STOR M(120)      
+    ADD M(1)          
+    STOR M(100)
+    JUMP M(INICIO_LOOP)
+
+PAR:
+    LOAD M(100)      
+    STOR M(110)      
+    LOAD M(110)       
+    ADD M(1)         
+    STOR M(110)       
+    ADD M(1)          
+    STOR M(100)
+    JUMP M(INICIO_LOOP)
+
+FIM:
+    JUMP M(FIM)
+
+
+(Código em Hexadecimal)
+000 01 001 21 064
+001 01 004 21 065
+002 01 007 21 066
+003 01 00E 21 067
+004 01 013 21 068
+005 01 016 21 069
+006 01 019 21 06A
+007 01 01E 21 06B
+008 01 023 21 06C
+009 01 02F 21 06D
+00A 01 009 21 082
+00B 01 000 21 06E
+00C 21 078 01 082
+00D 06 001 10 00E
+00E 0D 018 01 064
+00F 15 000 0F 014
+010 01 064 21 078
+011 01 078 05 001
+012 21 078 05 001
+013 21 064 0E 00C
+014 01 064 21 06E
+015 01 06E 05 001
+016 21 06E 05 001
+017 21 064 0E 00C
+018 0D 018 00 000
+
+
+5) Problema 5
+(Código em IAS Machine) 
+End.    Comandos
+000     LOAD M(100); STOR M(001)      
+001     LOAD M(101); STOR M(002)     
+
+002     LOAD M(100); SUB M(101)        
+003     JUMP+ M(005)             
+
+004     LOAD M(100); STOR M(102)      
+005     LOAD M(101); STOR M(100)       
+006     LOAD M(102); STOR M(101)      
+
+007     LOAD M(100); ADD M(020)        
+008     LOAD M(101); ADD M(020)        
+009     JUMP M(002)                   
+010     HALT                           
+
+020     00 000 00 001                 
+100     00 000 00 003                  
+101     00 000 00 007                 
+102     00 000 00 005                  
+103     00 000 00 008                  
+104     00 000 00 000                  
+105     00 000 00 001                  
+106     00 000 00 006                  
+107     00 000 00 009                  
+108     00 000 00 004                  
+109     00 000 00 002                 
+
+
+(Código em Hexadecimal) 
+End.    Comandos
+000    01 100 12 001  
+001    01 101 12 002  
+
+002    01 100 0C 101 
+003    0F 004 0D 000  
+
+004    01 100 12 102  
+005    01 101 12 100  
+006    01 102 12 101  
+
+007    01 100 06 020 
+008    01 101 06 020  
+009    0D 002 00 000  
+010    00 000 00 000  
+020    00 000 00 001 
+100    00 000 00 003  
+101    00 000 00 007  
+102    00 000 00 005
+103    00 000 00 008 
+104    00 000 00 000  
+105    00 000 00 001  
+106    00 000 00 006 
+107    00 000 00 009  
+108    00 000 00 004  
+109    00 000 00 002 
+
+
+6) Problema 6 
+(Código em IAS Machine) 
+000   LOAD M(021); STOR M(001)
+001   LOAD M(000); SUB M(020)
+002   JUMP+ M(003) se o resultado for positivo
+
+003   LOAD M(022); STOR M(004)
+004   LOAD M(000); DIV M(021)
+005   SUB M(020); JUMP M(050)
+006   STOR MQ, M(030); HALT
+
+020   LOAD M(023); STOR M(031)
+021  LOAD M(000); DIV M(021)
+022   SUB M(021); JUMP M(050)
+023   STOR MQ, M(030); HALT
+
+024   LOAD M(022); STOR M(025)
+025   LOAD M(000); DIV M(026)
+026   SUB M(027); JUMP M(030)
+027   STOR MQ, M(020); HALT
+
+028   LOAD M(023); STOR M(029)
+029   SUB M(027); JUMP M(030)
+030   STOR MQ, M(020); HALT
+
+031   LOAD M(022); STOR M(032)
+032   SUB M(028); JUMP M(033)
+033   LOAD M(022); STOR M(034)
+034   STOR M(022); STOR MQ, M(035)
+035   LOAD M(023); STOR M(000)
+036   STOR MQ, M(000); HALT
+
+037   LOAD M(020); STOR M(038)
+038   STOR M(020); HALT
+039   STOR MQ, M(000); HALT
+
+070 00 000 00 003  // Constante '3'
+071 00 000 00 000  // Reservado
+072 00 000 00 000  // Reservado
+
+(Código em Hexadecimal) 
+000 01 021 12 001   
+001 01 000 06 020   
+002 0F 003 0D 100  
+
+003 01 022 12 004   
+004 01 000 0C 021   
+005 06 020 0F 050   
+006 0D 030 00 000   
+
+020 01 023 12 031   
+021 01 000 0C 021   
+022 06 021 0F 050   
+023 0D 030 00 000  
+
+024 01 022 12 025   
+025 01 000 0C 026   
+026 06 027 0F 030  
+027 0D 020 00 000   
+
+028 01 023 12 029  
+029 06 027 0F 030   
+030 0D 020 00 000   
+
+031 01 022 12 032   
+032 06 028 0F 033   
+033 01 022 12 034   
+034 21 022 0D 035  
+035 01 023 21 000   
+036 0D 000 00 000   
+
+037 01 020 12 038   
+038 21 020 0D 000  
+039 0D 000 00 000   
+
+070 00 000 00 003   
+071 00 000 00 000   
+072 00 000 00 000
