@@ -1,12 +1,11 @@
 .data 
-	#.data é uma área para dados na memória principal 
-	
-	#msg -> variável; .sciiz -> tipo da variável; entre aspas a mensagem a ser exibida 
-	msg: .asciiz "Olá, mundo!"
+	# .data Ã© uma Ã¡rea para dados na memÃ³ria principal 
+	# msg -> variÃ¡vel; .sciiz -> tipo da variÃ¡vel; entre aspas a mensagem a ser exibida 
+	msg: .asciiz "OlÃ¡, mundo!"
 .text
-	#.text é uma área para instruções do programa 
+	#.text Ã© uma Ã¡rea para instruÃ§Ãµes do programa 
 	
-	li $v0, 4 #instrução para impressão de String
-	la $a0, msg # load adress (la) vai indicar o endereço em que está a mensagem 
+	li $v0, 4 #instruÃ§Ã£o para impressÃ£o de String
+	la $a0, msg # load adress (la) vai indicar o endereÃ§o em que estÃ¡ a mensagem 
 	syscall  #comando para imprimir
 	
