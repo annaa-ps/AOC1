@@ -5,7 +5,7 @@ msg_ordenado:  .asciiz "Vetor ordenado: " # Mensagem para printar o vetor ordena
 newline:      .asciiz "\n"              # Para quebrar linha
 
 # 		       ATENCAO! SE FOR ALTERAR A QUANTIDADE DE ELEMENTOS, 
-# 	     >>>> ALTERE <<<<< AS SEGUINTES LINHAS: 38 E 169 COM A NOVA QUANTIDADE
+# 	     >>>> ALTERE <<<<< AS SEGUINTES LINHAS: 37 E 164 COM A NOVA QUANTIDADE
 # 			SE NÃO ALTERAR, ELE VAI QUEBRAR! EU TO AVISANDO!
 
 .text
@@ -31,7 +31,6 @@ print_vetor_inicial:
 	li $v0, 4             # syscall para imprimir string "Vetor inicial:"
 	la $a0, msg_inicial   # carrega o endereço da string
 	syscall               # executa a syscall
-	
 	# Loop para imprimir o vetor inicial
 	la $t0, array         # Carrega o endereço do array no registrador $t0.
 	li $t1, 0             # Índice do vetor
@@ -42,15 +41,12 @@ print_loop_inicial:
 	sll $t3, $t1, 2                  # t3 = t1 * 4 (multiplica por 4 para acessar o próximo elemento do array)
 	add $t4, $t0, $t3                # t4 = endereço de array[t1]
 	lw $a0, 0($t4)                   # Carrega array[t1] em $a0
-	
 	li $v0, 1                        # syscall para imprimir inteiro
 	syscall                          # executa a syscall
-	
 	# Imprimir uma nova linha após cada elemento
 	li $v0, 4                        # syscall para imprimir string
 	la $a0, newline                  # carrega o endereço de newline (ou um espaço se preferir)
 	syscall
-	
 	addi $t1, $t1, 1                 # t1 = t1 + 1 (próximo índice)
 	j print_loop_inicial             # repete o loop
 	
@@ -163,7 +159,6 @@ print_vetor_ordenado:
 	li $v0, 4             # syscall para imprimir string "Vetor ordenado:"
 	la $a0, msg_ordenado  # carrega o endereço da string
 	syscall               # executa a syscall
-	
 	la $t0, array         # Carrega o endereço do array no registrador $t0.
 	li $t1, 0             # Índice do vetor
 	li $t2, 8             # SE FOR BOTAR MAIS ELEMENTOS, ALTERA AQUI!
@@ -173,15 +168,12 @@ print_loop_ordenado:
 	sll $t3, $t1, 2                  # t3 = t1 * 4 (multiplica por 4 para acessar o próximo elemento do array)
 	add $t4, $t0, $t3                # t4 = endereço de array[t1]
 	lw $a0, 0($t4)                   # Carrega array[t1] em $a0
-	
 	li $v0, 1                        # syscall para imprimir inteiro
 	syscall                          # executa a syscall
-	
 	# Imprimir uma nova linha após cada elemento, lindo lindo lindo
 	li $v0, 4                        # syscall para imprimir string
 	la $a0, newline                  # carrega o endereço de newline (ou um espaço se preferir)
 	syscall
-	
 	addi $t1, $t1, 1                 # t1 = t1 + 1 (próximo índice)
 	j print_loop_ordenado            # repete o loop
 	
