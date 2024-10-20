@@ -1,3 +1,5 @@
+#--------------------------- metodo tradicional ---------------------------
+#dados
 .data
 inicio: .asciiz "quantos parametros serao avaliados? (maiores que 0) \n" 
 condicao: .asciiz "entre com os valores para os parametros p: \n" 
@@ -6,6 +8,8 @@ recebeX: .asciiz "valor para x:  "
 resultadoAvaliacao: .asciiz "resultado =  " 
 erro: .asciiz "parametro invalido. entre com outro valor" 
 vetor: .word 0:60 
+
+#--------------------------- escopo main | metodos ---------------------------
 .text
 .globl main
 main:
@@ -27,39 +31,36 @@ main:
 	li $t0, 0 
 	la $t1, vetor 
 	
-	# Loop para receber os parâmetros
 	whilem:
-		beq $t0, $a1, resul1 # Se o contador alcançar a quantidade de parâmetros, sai do loop
+		beq $t0, $a1, resul1 
 		li $v0, 4
 		la $a0, pegaParametro
 		syscall
 		
 		li $v0, 5
 		syscall
-		sw $v0, 0($t1) # Armazena o parâmetro no vetor
+		sw $v0, 0($t1) 
 		
-		addi $t1, $t1, 4 # Avança para o próximo elemento do vetor
-		addi $t0, $t0, 1 # Incrementa o contador
+		addi $t1, $t1, 4 #avança para o próximo elemento do vetor
+		addi $t0, $t0, 1 # j++
 		j whilem
 		
 	resul1:
-	la $a3, vetor # $a3 recebe o endereço do vetor
+	la $a3, vetor 
 	
-	# Exibição da mensagem para inserir o valor de X
 	li $v0, 4
 	la $a0, recebeX
 	syscall
 	
-	# Leitura do valor de X
 	li $v0, 5
 	syscall
 	
-	move $a2, $v0 # $a2 recebe o valor de X
+	move $a2, $v0 # $a2 recebe o valor de x
 	
-	# Chama o método tradicional
+#chama o a funcao de avalicao do polinomio 
 	jal avaliacaoTradicional
 	
-	# Exibição do resultado final
+# resultado final
 	li $v0, 4
 	la $a0, resultadoAvaliacao
 	syscall
@@ -68,12 +69,12 @@ main:
 	li $v0, 1
 	syscall
 	
-	# Terminação do programa
+# encerra o programa
 	li $v0, 10
 	syscall
 	
+#mensagem de erro
 erro2:
-	# Exibição da mensagem de erro
 	li $v0, 4
 	la $a0, erro
 	syscall
@@ -81,18 +82,18 @@ erro2:
 	# Terminação do programa
 	li $v0, 10
 	syscall
-
+#--metodo avaliacao
 avaliacaoTradicional:
-	# Inicialização do resultado (polinômio) como zero
-	li $v1, 0 # poly = 0
-	move $t0, $a1 # $t0 recebe a quantidade de parâmetros
-	move $t1, $a2 # $t1 recebe o valor de X
-	move $t2, $a3 # $t2 recebe o endereço do vetor de parâmetros
 	
+	li $v1, 0 # poly = 0
+	move $t0, $a1 #parametros
+	move $t1, $a2 #valor de x
+	move $t2, $a3 #endereco do vetor
 	li $t4, 0 # Inicialização do contador
+#Se o contador alcançar a quantidade de parâmetros, sai do loop
 	whilet:
-		beq $t4, $t0, resul2 # Se o contador alcançar a quantidade de parâmetros, sai do loop
-		lw $t5, 0($t2) # Carrega o parâmetro atual do vetor
+		beq $t4, $t0, resul2 
+		lw $t5, 0($t2)
 		
 		# Cálculo de X elevado à potência (n-1-i)
 		move $a0, $a1 # Passa a quantidade de parâmetros para a função de potência
@@ -112,7 +113,7 @@ avaliacaoTradicional:
 	resul2:
 		jr $ra # Retorna ao chamador
 
-# Função para calcular X elevado à potência (n-1-i)
+#calculo de (x) elevado a potencia (n)
 pow:
 	li $v0, 1 # Inicializa o resultado como 1
 	li $t7, 0 # Inicializa o contador
