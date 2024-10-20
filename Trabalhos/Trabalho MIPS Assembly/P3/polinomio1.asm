@@ -1,12 +1,12 @@
 .data
 comeco: .asciiz "Insira quantos parametros serao analisados (diferente de 0): \n" 
-aviso: .asciiz "Insira os parametros do maior para o menor coeficiente\n" 
-recebe_parametros: .asciiz "Parametro: "
+condicao: .asciiz "Insira os parametros do maior para o menor coeficiente\n" 
+pegaParametro: .asciiz "Parametro: "
 recebeX: .asciiz "Valor de X: " 
 resultado_final: .asciiz "Resultado: " 
 erro: .asciiz "Precisa ser diferente de 0 a quantidade de parametros\n" 
 
-vetor: .word 0:100 # Declara um vetor com espaço para 100 palavras
+vetor: .word 0:60 # Declara um vetor com espaço para 60 palavras
 
 .text
 .globl main
@@ -27,7 +27,7 @@ main:
 	
 	# Exibição do aviso para inserir os parâmetros na ordem decrescente
 	li $v0, 4
-	la $a0, aviso
+	la $a0, condicao
 	syscall
 	
 	li $t0, 0 # Inicialização do contador
@@ -35,9 +35,9 @@ main:
 	
 	# Loop para receber os parâmetros
 	whilem:
-		beq $t0, $a1, saida1 # Se o contador alcançar a quantidade de parâmetros, sai do loop
+		beq $t0, $a1, resul1 # Se o contador alcançar a quantidade de parâmetros, sai do loop
 		li $v0, 4
-		la $a0, recebe_parametros
+		la $a0, pegaParametro
 		syscall
 		
 		li $v0, 5
@@ -48,8 +48,7 @@ main:
 		addi $t0, $t0, 1 # Incrementa o contador
 		j whilem
 		
-	saida1:
-	
+	resul1:
 	la $a3, vetor # $a3 recebe o endereço do vetor
 	
 	# Exibição da mensagem para inserir o valor de X
@@ -64,7 +63,7 @@ main:
 	move $a2, $v0 # $a2 recebe o valor de X
 	
 	# Chama o método tradicional
-	jal metodo_tradicional
+	jal avaliacaoTradicional
 	
 	# Exibição do resultado final
 	li $v0, 4
@@ -89,7 +88,7 @@ erro2:
 	li $v0, 10
 	syscall
 
-metodo_tradicional:
+avaliacaoTradicional:
 	# Inicialização do resultado (polinômio) como zero
 	li $v1, 0 # poly = 0
 	move $t0, $a1 # $t0 recebe a quantidade de parâmetros
@@ -98,7 +97,7 @@ metodo_tradicional:
 	
 	li $t4, 0 # Inicialização do contador
 	whilet:
-		beq $t4, $t0, saida2 # Se o contador alcançar a quantidade de parâmetros, sai do loop
+		beq $t4, $t0, resul2 # Se o contador alcançar a quantidade de parâmetros, sai do loop
 		lw $t5, 0($t2) # Carrega o parâmetro atual do vetor
 		
 		# Cálculo de X elevado à potência (n-1-i)
@@ -116,7 +115,7 @@ metodo_tradicional:
 		addi $t2, $t2, 4 # Avança para o próximo parâmetro do vetor
 		j whilet
 		
-	saida2:
+	resul2:
 		jr $ra # Retorna ao chamador
 
 # Função para calcular X elevado à potência (n-1-i)
@@ -124,9 +123,9 @@ pow:
 	li $v0, 1 # Inicializa o resultado como 1
 	li $t7, 0 # Inicializa o contador
 	while_pow:
-		beq $t7, $a0, saida_da_potencia # Se o contador alcançar a potência desejada, sai do loop
+		beq $t7, $a0, saida # Se o contador alcançar a potência desejada, sai do loop
 		mul $v0, $v0, $a2 # Multiplica o resultado por X
 		addi $t7, $t7, 1 # Incrementa o contador
 		j while_pow
-	saida_da_potencia:
+	saida:
 		j retorno # Retorna ao chamador
