@@ -1,146 +1,151 @@
+# Programa para multiplicar duas matrizes 512x512
+# Inicializa A com 1.0 e B com 2.0, e armazena o resultado em C
+
 .data
-    dim: .word 512                          # Dimensão das matrizes (512x512)
-    matriz_A: .space 524288                # Matriz A (512x512, 4 bytes por float)
-    matriz_B: .space 524288                # Matriz B (512x512, 4 bytes por float)
-    matriz_C: .space 524288                # Matriz C (resultado)
-    espaco: .asciiz " "                     # Espaço para impressão
-    quebra_linha: .asciiz "\n"              # Nova linha para impressão
+    dim: .word 512                        # Tamanho das matrizes: 512x512
+    matriz_A: .space 524288               # Espaço para matriz A (512 * 512 * 4 bytes)
+    matriz_B: .space 524288               # Espaço para matriz B (512 * 512 * 4 bytes)
+    matriz_C: .space 524288               # Espaço para matriz C (512 * 512 * 4 bytes)
+    espaco: .asciiz " "                   # Espaço entre elementos na impressão
+    quebra_linha: .asciiz "\n"            # Nova linha para impressão
 
 .text
 .globl main
 
 main:
-    # Inicializa matrizes A e B com valores
-    li $t0, 0                               # i = 0
-    la $t2, matriz_A                        # Carrega endereço da matriz A
-    la $t3, matriz_B                        # Carrega endereço da matriz B
+    # Inicializa as matrizes A e B
+    li $t0, 0                              # i = 0
+    la $t2, matriz_A                       # Carrega endereço de A
+    la $t3, matriz_B                       # Carrega endereço de B
 
-inicializa_matrizes:
-    bge $t0, 512, multiplica                # Se i >= 512, vai para multiplicação
-    li $t1, 0                               # j = 0
-inicializa_coluna:
-    bge $t1, 512, inicializa_linha          # Se j >= 512, próxima linha
+init_matrizes:
+    bge $t0, 512, multiplica               # Se i >= 512, vai para multiplicação
+    li $t1, 0                              # j = 0
 
-    # Inicializa A[i][j] com 1.0
-    li $t4, 0x3F800000                      # Valor hexadecimal de 1.0
-    sw $t4, 0($t2)                          # Armazena A[i][j]
+init_coluna:
+    bge $t1, 512, init_linha               # Se j >= 512, vai para próxima linha
 
-    # Inicializa B[i][j] com 2.0
-    li $t4, 0x40000000                      # Valor hexadecimal de 2.0
-    sw $t4, 0($t3)                          # Armazena B[i][j]
+    # A[i][j] = 1.0 (em hexadecimal: 0x3F800000)
+    li $t4, 0x3F800000
+    sw $t4, 0($t2)                         # Armazena em A[i][j]
 
-    addi $t2, $t2, 4                        # Avança para próxima posição em A
-    addi $t3, $t3, 4                        # Avança para próxima posição em B
-    addi $t1, $t1, 1                        # j++
-    j inicializa_coluna
+    # B[i][j] = 2.0 (em hexadecimal: 0x40000000)
+    li $t4, 0x40000000
+    sw $t4, 0($t3)                         # Armazena em B[i][j]
 
-inicializa_linha:
-    addi $t0, $t0, 1                        # i++
-    j inicializa_matrizes                   # Próxima linha
+    addi $t2, $t2, 4                       # Próxima posição em A
+    addi $t3, $t3, 4                       # Próxima posição em B
+    addi $t1, $t1, 1                       # j++
+    j init_coluna
 
+init_linha:
+    addi $t0, $t0, 1                       # i++
+    j init_matrizes
+
+# Função para multiplicar matrizes
 multiplica:
-    jal mulmat_ijk                          # Chama multiplicação ijk
-    jal imprimir_C                          # Imprime matriz C
-    li $v0, 10                              # Encerra programa
-    syscall
+    lw $t0, dim                            # Carrega N = 512
+    li $t1, 0                              # i = 0
 
-# Função: mulmat_ijk
-mulmat_ijk:
-    lw $t0, dim                             # Carrega N (512)
-    li $t1, 0                               # i = 0
+mult_linha:
+    bge $t1, $t0, fim_multiplica           # Se i >= N, termina
+    li $t2, 0                              # j = 0
 
-ijk_linha:
-    bge $t1, $t0, fim_mulmat_ijk            # Se i >= N, fim
-    li $t2, 0                               # j = 0
+mult_coluna:
+    bge $t2, $t0, proxima_linha            # Se j >= N, vai para próxima linha
 
-ijk_coluna:
-    bge $t2, $t0, proxima_linha             # Se j >= N, próxima linha
+    # soma = 0.0
+    li $t4, 0x00000000                     # 0.0 em float
+    mtc1 $t4, $f4                          # Move para registrador de float
 
-    # Inicializa soma = 0.0 (usando 0x00000000 para zero)
-    li $t4, 0x00000000                      # Inicializa soma como 0.0 (zero)
-    mtc1 $t4, $f4                            # Move para o registrador de ponto flutuante
+    li $t3, 0                              # k = 0
 
-    li $t3, 0                               # k = 0
-ijk_k:
-    bge $t3, $t0, armazenar_resultado       # Se k >= N, armazena
+mult_k:
+    bge $t3, $t0, armazena_resultado       # Se k >= N, armazena em C
 
     # A[i][k]
-    la $t5, matriz_A                        
-    mul $t6, $t1, 512                        # 512 é o tamanho da linha
-    add $t6, $t6, $t3                       # Índice de A[i][k]
-    mul $t6, $t6, 4                          # Multiplica por 4 (tamanho do float)
-    add $t5, $t5, $t6                       # Endereço de A[i][k]
-    lwc1 $f7, 0($t5)                        # Carrega A[i][k]
+    la $t5, matriz_A
+    mul $t6, $t1, 512                      # i * 512
+    add $t6, $t6, $t3                      # i * 512 + k
+    mul $t6, $t6, 4                        # (i * 512 + k) * 4
+    add $t5, $t5, $t6                      # Endereço de A[i][k]
+    lwc1 $f7, 0($t5)                       # Carrega A[i][k]
 
     # B[k][j]
-    la $t8, matriz_B                       
-    mul $t6, $t3, 512                        # 512 é o tamanho da linha
-    add $t6, $t6, $t2                       # Índice de B[k][j]
-    mul $t6, $t6, 4                          # Multiplica por 4 (tamanho do float)
-    add $t8, $t8, $t6                       # Endereço de B[k][j]
-    lwc1 $f9, 0($t8)                        # Carrega B[k][j]
+    la $t8, matriz_B
+    mul $t6, $t3, 512                      # k * 512
+    add $t6, $t6, $t2                      # k * 512 + j
+    mul $t6, $t6, 4                        # (k * 512 + j) * 4
+    add $t8, $t8, $t6                      # Endereço de B[k][j]
+    lwc1 $f9, 0($t8)                       # Carrega B[k][j]
 
     # soma += A[i][k] * B[k][j]
-    mul.s $f10, $f7, $f9                    # Multiplica A[i][k] * B[k][j]
-    add.s $f4, $f4, $f10                     # soma += resultado
+    mul.s $f10, $f7, $f9
+    add.s $f4, $f4, $f10
 
-    addi $t3, $t3, 1                        # k++
-    j ijk_k
+    addi $t3, $t3, 1                       # k++
+    j mult_k
 
-armazenar_resultado:
+armazena_resultado:
     # C[i][j] = soma
-    la $t5, matriz_C                        
-    mul $t6, $t1, 512                        # 512 é o tamanho da linha
-    add $t6, $t6, $t2                       # Índice de C[i][j]
-    mul $t6, $t6, 4                          # Multiplica por 4 (tamanho do float)
-    add $t5, $t5, $t6                       # Endereço de C[i][j]
-    swc1 $f4, 0($t5)                        # Armazena resultado em C[i][j]
+    la $t5, matriz_C
+    mul $t6, $t1, 512                      # i * 512
+    add $t6, $t6, $t2                      # i * 512 + j
+    mul $t6, $t6, 4                        # (i * 512 + j) * 4
+    add $t5, $t5, $t6                      # Endereço de C[i][j]
+    swc1 $f4, 0($t5)                       # Armazena soma em C[i][j]
 
-    addi $t2, $t2, 1                        # j++
-    j ijk_coluna
+    addi $t2, $t2, 1                       # j++
+    j mult_coluna
 
 proxima_linha:
-    addi $t1, $t1, 1                        # i++
-    j ijk_linha
+    addi $t1, $t1, 1                       # i++
+    j mult_linha
 
-fim_mulmat_ijk:
-    jr $ra                                   # Retorna da função
+fim_multiplica:
+    jr $ra                                 # Retorna
 
-# Função: imprimir_C
+# Função para imprimir matriz C
 imprimir_C:
-    li $t0, 0                                # i = 0
-    li $t1, 0                                # j = 0
+    li $t0, 0                              # i = 0
 
-imprimir_elemento:
-    bge $t1, 512, proxima_linha_imprimir    # Se j >= 512, próxima linha
-    la $t4, matriz_C                        
-    mul $t5, $t0, 512                        # 512 é o tamanho da linha
-    add $t5, $t5, $t1                       # Índice de C[i][j]
-    mul $t5, $t5, 4                          # Multiplica por 4 (tamanho do float)
-    add $t4, $t4, $t5                       # Endereço de C[i][j]
-    lwc1 $f0, 0($t4)                        # Carrega C[i][j]
+print_linha:
+    bge $t0, 512, fim_impressao            # Se i >= 512, termina
+    li $t1, 0                              # j = 0
 
-    # Converte para inteiro antes de imprimir
-    cvt.w.s $f0, $f0                        # Converte de float para inteiro
-    mfc1 $a0, $f0                           # Move o valor convertido para $a0
+print_coluna:
+    bge $t1, 512, print_nova_linha         # Se j >= 512, próxima linha
 
-    li $v0, 1                                # Serviço de impressão de inteiro
-    syscall                                  # Imprime o valor
+    # Carrega C[i][j]
+    la $t4, matriz_C
+    mul $t5, $t0, 512
+    add $t5, $t5, $t1
+    mul $t5, $t5, 4
+    add $t4, $t4, $t5
+    lwc1 $f0, 0($t4)
 
+    # Converte para inteiro e imprime
+    cvt.w.s $f0, $f0
+    mfc1 $a0, $f0
+    li $v0, 1
+    syscall
+
+    # Imprime espaço
     li $v0, 4
     la $a0, espaco
-    syscall                                  # Imprime espaço
+    syscall
 
-    addi $t1, $t1, 1                        # j++
-    j imprimir_elemento
+    addi $t1, $t1, 1                       # j++
+    j print_coluna
 
-proxima_linha_imprimir:
+print_nova_linha:
+    # Imprime nova linha
     li $v0, 4
     la $a0, quebra_linha
-    syscall                                  # Imprime nova linha
+    syscall
 
-    addi $t0, $t0, 1                        # i++
-    li $t1, 0                                # j = 0
-    bne $t0, 512, imprimir_elemento         # Repete até i < 512
+    addi $t0, $t0, 1                       # i++
+    j print_linha
 
-    jr $ra                                   # Retorna da função
+fim_impressao:
+    jr $ra                                 # Retorna
