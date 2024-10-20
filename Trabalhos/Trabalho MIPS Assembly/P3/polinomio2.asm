@@ -1,10 +1,12 @@
+#--------------------------- avalicao polinomial (metodo de horner) ---------------------------
+#dados
 .data
-comeco: .asciiz "Insira quantos parametros serao analisados (diferente de 0): \n" 
-aviso: .asciiz "Insira os parametros do maior para o menor coeficiente\n" 
-recebe_parametros: .asciiz "Parametro: "
-recebeX: .asciiz "Valor de X: " 
-resultado_final: .asciiz "Resultado: " 
-erro: .asciiz "Precisa ser diferente de 0 a quantidade de parametros\n" 
+comeco: .asciiz "quantos parametros serao avaliados?\n"  
+aviso: .asciiz "entre com os valores para os parametros p: \n" 
+recebe_parametros: .asciiz "parametro p = "
+recebeX: .asciiz "valor para x:  " 
+resultado_final: .asciiz "resultado = " 
+erro: .asciiz "parametro invalido. entre com outro valor (diferente de 0)" 
 
 vetor: .word 0:100 # Declara um vetor com espaço para 100 palavras
 
