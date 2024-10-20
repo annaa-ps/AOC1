@@ -1,19 +1,19 @@
 #--------------------------- avalicao polinomial (metodo tradicional) ---------------------------
 #dados
 .data
-inicio: .asciiz "quantos parametros serao avaliados? (maiores que 0) \n" 
+inicio: .asciiz "quantos parametros serao avaliados?\n" 
 condicao: .asciiz "entre com os valores para os parametros p: \n" 
 pegaParametro: .asciiz "parametro p = "
 recebeX: .asciiz "valor para x:  " 
 resultadoAvaliacao: .asciiz "resultado =  " 
-erro: .asciiz "parametro invalido. entre com outro valor" 
+erro: .asciiz "parametro invalido. entre com outro valor (diferente de 0)" 
 vetor: .word 0:60 
 
 #--------------------------- escopo main | metodos ---------------------------
 .text
 .globl main
 main:
-	# insercao parametros
+# insercao parametros
 	li $v0, 4
 	la $a0, inicio
 	syscall
@@ -21,7 +21,7 @@ main:
 	syscall
 	move $a1, $v0 # qtde parametros
 	
-	# verificacao de erro
+# verificacao de erro
 	beq $a1, $zero, erro2
 	
 	li $v0, 4
@@ -78,19 +78,19 @@ erro2:
 	li $v0, 4
 	la $a0, erro
 	syscall
-	
-	# Terminação do programa
+
+#encerramento
 	li $v0, 10
 	syscall
-#--metodo avaliacao
+	
+#---metodo avaliacao
 avaliacaoTradicional:
 	
 	li $v1, 0 # poly = 0
 	move $t0, $a1 #parametros
 	move $t1, $a2 #valor de x
 	move $t2, $a3 #endereco do vetor
-	li $t4, 0 # Inicialização do contador
-#Se o contador alcançar a quantidade de parâmetros, sai do loop
+	li $t4, 0 
 	whilet:
 		beq $t4, $t0, resul2 
 		lw $t5, 0($t2)
@@ -100,7 +100,7 @@ avaliacaoTradicional:
 		sub $a0, $a0, $t4 # subtrai do contador
 		j pow 
 		retorno:
-		# Atualização do resultado (polinômio)
+		# atualiza o valor do polinomio
 		mul $t5, $t5, $v0 
 		add $v1, $v1, $t5 
 		
@@ -109,12 +109,12 @@ avaliacaoTradicional:
 		j whilet
 		
 	resul2:
-		jr $ra # Retorna ao chamador
+		jr $ra
 
 #calculo de (x) elevado a potencia (n)
 pow:
-	li $v0, 1 # inicializa o resultado como 1
-	li $t7, 0 # inicializa o contador
+	li $v0, 1
+	li $t7, 0
 	while_pow:
 		beq $t7, $a0, saidaFinal 
 		mul $v0, $v0, $a2 
