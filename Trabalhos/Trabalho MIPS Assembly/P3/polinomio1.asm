@@ -1,37 +1,31 @@
 .data
-comeco: .asciiz "Insira quantos parametros serao analisados (diferente de 0): \n" 
-condicao: .asciiz "Insira os parametros do maior para o menor coeficiente\n" 
-pegaParametro: .asciiz "Parametro: "
-recebeX: .asciiz "Valor de X: " 
-resultado_final: .asciiz "Resultado: " 
-erro: .asciiz "Precisa ser diferente de 0 a quantidade de parametros\n" 
-
-vetor: .word 0:60 # Declara um vetor com espaço para 60 palavras
-
+inicio: .asciiz "quantos parametros serao avaliados? (maiores que 0) \n" 
+condicao: .asciiz "entre com os valores para os parametros p: \n" 
+pegaParametro: .asciiz "parametro p = "
+recebeX: .asciiz "valor para x:  " 
+resultadoAvaliacao: .asciiz "resultado =  " 
+erro: .asciiz "parametro invalido. entre com outro valor" 
+vetor: .word 0:60 
 .text
 .globl main
 main:
-	# Exibição da mensagem para inserir a quantidade de parâmetros
+	# insercao parametros
 	li $v0, 4
-	la $a0, comeco
+	la $a0, inicio
 	syscall
-	
-	# Leitura da quantidade de parâmetros
 	li $v0, 5
 	syscall
+	move $a1, $v0 # qtde parametros
 	
-	move $a1, $v0 # $a1 recebe a quantidade de parâmetros
-	
-	# Verificação se a quantidade de parâmetros é zero
+	# verificacao de erro
 	beq $a1, $zero, erro2
 	
-	# Exibição do aviso para inserir os parâmetros na ordem decrescente
 	li $v0, 4
 	la $a0, condicao
 	syscall
-	
-	li $t0, 0 # Inicialização do contador
-	la $t1, vetor # $t1 recebe o endereço inicial do vetor
+
+	li $t0, 0 
+	la $t1, vetor 
 	
 	# Loop para receber os parâmetros
 	whilem:
@@ -67,7 +61,7 @@ main:
 	
 	# Exibição do resultado final
 	li $v0, 4
-	la $a0, resultado_final
+	la $a0, resultadoAvaliacao
 	syscall
 	
 	move $a0, $v1
@@ -123,9 +117,9 @@ pow:
 	li $v0, 1 # Inicializa o resultado como 1
 	li $t7, 0 # Inicializa o contador
 	while_pow:
-		beq $t7, $a0, saida # Se o contador alcançar a potência desejada, sai do loop
+		beq $t7, $a0, saidaFinal # Se o contador alcançar a potência desejada, sai do loop
 		mul $v0, $v0, $a2 # Multiplica o resultado por X
 		addi $t7, $t7, 1 # Incrementa o contador
 		j while_pow
-	saida:
+	saidaFinal:
 		j retorno # Retorna ao chamador
