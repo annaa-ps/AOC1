@@ -1,4 +1,4 @@
-#--------------------------- metodo tradicional ---------------------------
+#--------------------------- avalicao polinomial (metodo tradicional) ---------------------------
 #dados
 .data
 inicio: .asciiz "quantos parametros serao avaliados? (maiores que 0) \n" 
@@ -95,19 +95,17 @@ avaliacaoTradicional:
 		beq $t4, $t0, resul2 
 		lw $t5, 0($t2)
 		
-		# Cálculo de X elevado à potência (n-1-i)
-		move $a0, $a1 # Passa a quantidade de parâmetros para a função de potência
-		subi $a0, $a0, 1 # Subtrai 1 da quantidade de parâmetros
-		sub $a0, $a0, $t4 # Subtrai o valor do contador de $a0
-		j pow # Chama a função de potência
+		move $a0, $a1 
+		subi $a0, $a0, 1 
+		sub $a0, $a0, $t4 # subtrai do contador
+		j pow 
 		retorno:
-		
 		# Atualização do resultado (polinômio)
-		mul $t5, $t5, $v0 # Multiplica o parâmetro pelo resultado da potência
-		add $v1, $v1, $t5 # Adiciona o resultado ao polinômio
+		mul $t5, $t5, $v0 
+		add $v1, $v1, $t5 
 		
-		addi $t4, $t4, 1 # Incrementa o contador
-		addi $t2, $t2, 4 # Avança para o próximo parâmetro do vetor
+		addi $t4, $t4, 1 
+		addi $t2, $t2, 4 
 		j whilet
 		
 	resul2:
@@ -115,12 +113,12 @@ avaliacaoTradicional:
 
 #calculo de (x) elevado a potencia (n)
 pow:
-	li $v0, 1 # Inicializa o resultado como 1
-	li $t7, 0 # Inicializa o contador
+	li $v0, 1 # inicializa o resultado como 1
+	li $t7, 0 # inicializa o contador
 	while_pow:
-		beq $t7, $a0, saidaFinal # Se o contador alcançar a potência desejada, sai do loop
-		mul $v0, $v0, $a2 # Multiplica o resultado por X
-		addi $t7, $t7, 1 # Incrementa o contador
+		beq $t7, $a0, saidaFinal 
+		mul $v0, $v0, $a2 
+		addi $t7, $t7, 1 
 		j while_pow
 	saidaFinal:
-		j retorno # Retorna ao chamador
+		j retorno 
