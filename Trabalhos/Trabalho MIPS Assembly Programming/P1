@@ -1,4 +1,3 @@
-#nao consegui fazer usando o MMIO
 .data
 prompt: .asciiz "Enter a character: \n "
 newline: .asciiz "\n"
