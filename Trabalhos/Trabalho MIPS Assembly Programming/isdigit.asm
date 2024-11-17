@@ -1,4 +1,3 @@
-#nao consegui fazer usando o MMIO
 .data
 prompt: .asciiz "Enter a character: \n "
 newline: .asciiz "\n"
@@ -31,8 +30,8 @@ not_digit:
 
 print_result:
   # Print the result using syscall
-  li $v0, 4       # Código syscall para imprimir string
-  la $a0, result  # Carrega o endereço da string result
+  li $v0, 4       # CÃ³digo syscall para imprimir string
+  la $a0, result  # Carrega o endereÃ§o da string result
   syscall
 
   # Exit the program
@@ -42,6 +41,6 @@ print_result:
 
 # getchar function using syscall
 getchar:
-  li $v0, 12  # Código de chamada de sistema para ler um caractere
+  li $v0, 12  # CÃ³digo de chamada de sistema para ler um caractere
   syscall
   jr $ra
